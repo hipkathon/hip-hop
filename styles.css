@@ -1,0 +1,46 @@
+body {
+  margin: 0;
+  font-family: Consolas, monaco, monospace;
+}
+
+.wrapper {
+  min-width: 1000px;
+}
+
+#editor {
+  width: 600px;
+  min-height: 400px;
+  font-size: 14px;
+  padding: 4px;
+  resize: none;
+  overflow: hidden;
+}
+
+#display-text {
+  width: 600px;
+  height: 400px;
+  position: absolute;
+  font-size: 14px;
+  pointer-events: none;
+  padding: 5px;
+  white-space: pre-wrap;
+}
+
+#indicator-wrapper {
+  position: relative;
+}
+
+.color-button {
+  width: 40px;
+  height: 40px;
+  border: 0;
+  margin: 10px;
+}
+
+.big-button {
+  height: 40px;
+  background-color: black;
+  color: white;
+  border: 0;
+  border-radius: 15px;
+}
