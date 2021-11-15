@@ -125,6 +125,13 @@ const getVariableValue = (color) => {
     }
 }
 
+const clearVariableValue = () => {
+    createColorButtons();
+
+    variables = {};
+    stack.length = 0;
+}
+
 const playBeat = () => {
     getAudioContext();
     const hz = 65.406;
@@ -193,7 +200,7 @@ let lastTimestamp = new Date(), interval = 250, count = 8;
 
 const run = async () => {
     isRunning = true;
-    variables = {};
+    clearVariableValue();
 
     let consoleTextArea = document.getElementById('console-text-area');
     consoleTextArea.value = '';
@@ -441,7 +448,8 @@ const onClickColorButton = (event) => {
 
 const createColorButtons = () => {
     const colorButtonWrapper = document.getElementById('color-buttons-wrapper');
-    
+    colorButtonWrapper.innerText = '';
+
     colors.forEach(color => {
         const colorWrapper = document.createElement('div');
         colorWrapper.className = 'd-flex align-items-center';
