@@ -1,21 +1,25 @@
 let rand = null;
 let beats = [];
-const codes = [['C', 'G', 'Am', 'F'], ['F', 'C', 'Dm', 'G']];
+const codes = [
+    ['C', 'G', 'Am', 'F'],
+    ['F', 'C', 'Dm', 'G']
+];
 const hz = {
-    C:  [130.813, 164.834, 195.998, 261.626, 329.628, 391.995, 523.251, 659.255],
+    C: [130.813, 164.834, 195.998, 261.626, 329.628, 391.995, 523.251, 659.255],
     Dm: [146.832, 184.997, 220.000, 293.665, 369.994, 440.000, 587.330, 739.989],
-    G:  [146.832, 195.998, 246.942, 293.665, 391.995, 493.883, 587.330, 783.991],
+    G: [146.832, 195.998, 246.942, 293.665, 391.995, 493.883, 587.330, 783.991],
     Em: [155.564, 184.997, 195.998, 246.942, 311.127, 369.994, 391.995, 493.883],
     Am: [130.813, 164.834, 220.000, 261.626, 329.628, 440.000, 523.251, 659.255],
-    F:  [130.813, 174.614, 220.000, 261.626, 349.228, 440.000, 523.251, 698.457]
+    F: [130.813, 174.614, 220.000, 261.626, 349.228, 440.000, 523.251, 698.457]
 };
-let codeType = 0, codeIndex = -1;
+let codeType = 0,
+    codeIndex = -1;
 let isRunning = false;
 
 const xmur3 = (str) => {
     let h = 1779033703 ^ str.length;
     for (let i = 0; i < str.length; i++) {
-        h = Math.imul(h ^ str.charCodeAt(i), 3432918353),
+        h = Math.imul(h ^ str.charCodeAt(i), 3432918353);
         h = h << 13 | h >>> 19;
     }
     return () => {
@@ -26,10 +30,10 @@ const xmur3 = (str) => {
 };
 const mulberry32 = (a) => {
     return () => {
-      var t = a += 0x6D2B79F5;
-      t = Math.imul(t ^ t >>> 15, t | 1);
-      t ^= t + Math.imul(t ^ t >>> 7, t | 61);
-      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+        var t = a += 0x6D2B79F5;
+        t = Math.imul(t ^ t >>> 15, t | 1);
+        t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+        return ((t ^ t >>> 14) >>> 0) / 4294967296;
     };
 };
 const setSeed = (str) => {
@@ -83,14 +87,14 @@ const keywordObject = {
 const stack = [];
 
 const setVariableValue = (color, value) => {
-    if (!color){
+    if (!color) {
         color = 'black'
     }
     if (value === null || isNaN(value)) {
         return;
     }
 
-    if(color === 'black'){
+    if (color === 'black') {
         stack.push(value);
         const blackWapper = document.getElementById('black-wrapper');
 
@@ -107,18 +111,18 @@ const setVariableValue = (color, value) => {
 }
 
 const getVariableValue = (color) => {
-    if (!color){
+    if (!color) {
         color = 'black'
     }
 
-    if (color === 'black'){
+    if (color === 'black') {
         const blackWapper = document.getElementById('black-wrapper');
-        if(blackWapper.childNodes.length === 1){
+        if (blackWapper.childNodes.length === 1) {
             return undefined;
         }
         const child = blackWapper.childNodes[blackWapper.childNodes.length - 1];
         blackWapper.removeChild(child);
-        
+
         return stack.pop() || 0;
     } else {
         return variables[color] || 0;
@@ -137,7 +141,7 @@ const playBeat = () => {
     const hz = 65.406;
     //const beats = [0, 0.5, 1, 1.5];
     //const beats = [0, 0.375, 0.5, 1, 1.5];
-    
+
     const oscillator = audioContext.createOscillator();
     oscillator.connect(audioContext.destination);
     oscillator.type = 'sawtooth';
@@ -170,8 +174,8 @@ const getCommandListPerLine = (codeContent) => {
     let commandList = [];
 
     let command = '';
-    for(let index = 0; index < codeContent.length; index++){
-        if (codeContent[index] === ' ' || codeContent[index] === '\n'){
+    for (let index = 0; index < codeContent.length; index++) {
+        if (codeContent[index] === ' ' || codeContent[index] === '\n') {
             commandList.push({
                 command: command,
                 position: index - command.length
@@ -196,9 +200,11 @@ const getCommandListPerLine = (codeContent) => {
     return commandListPerLine;
 }
 
-let lastTimestamp = new Date(), interval = 250, count = 8;
+let lastTimestamp = new Date(),
+    interval = 250,
+    count = 8;
 
-const run = async () => {
+const run = async() => {
     isRunning = true;
     clearVariableValue();
 
@@ -227,7 +233,7 @@ const run = async () => {
     let lineIndex = 0;
     while (lineIndex < commandListPerLine.length && isRunning) {
         let commandLine = commandListPerLine[lineIndex];
-        
+
         if (count == 8) {
             playBeat();
             codeIndex = (codeIndex + 1) % 4;
@@ -236,9 +242,9 @@ const run = async () => {
         count++;
 
         indicator.style = `position: absolute; top: ${3 + lineIndex * 21}px; left: -15px`;
-        for (let commandIndex = 0; commandIndex < commandLine.length; commandIndex++){
+        for (let commandIndex = 0; commandIndex < commandLine.length; commandIndex++) {
             const commandObject = commandLine[commandIndex];
-            if (!commandObject.command){
+            if (!commandObject.command) {
                 // Empty string
                 continue;
             }
@@ -246,7 +252,7 @@ const run = async () => {
             const firstColor = codeStyle[commandObject.position];
             const secondColor = codeStyle[commandObject.position + 1];
 
-            switch(keywordObject[commandObject.command]){
+            switch (keywordObject[commandObject.command]) {
                 case 'MOV':
                     setVariableValue(firstColor, getVariableValue(secondColor));
                     break;
@@ -264,9 +270,9 @@ const run = async () => {
                     break;
                 case 'DIV':
                     const secondValue = getVariableValue(secondColor);
-                    if(secondValue === 0){
+                    if (secondValue === 0) {
                         setVariableValue(secondColor, secondValue)
-                    }else{
+                    } else {
                         setVariableValue(firstColor, getVariableValue(firstColor) / secondValue);
                         playMelody();
                     }
@@ -277,7 +283,7 @@ const run = async () => {
                     break;
                 case 'JEQ':
                     if (variables[firstColor] === 0) {
-                        if (commandLine[commandIndex + 1]){
+                        if (commandLine[commandIndex + 1]) {
                             if (labels.hasOwnProperty(commandLine[commandIndex + 1].command)) {
                                 lineIndex = labels[commandLine[commandIndex + 1].command] - 1;
                             } else {
@@ -288,7 +294,7 @@ const run = async () => {
                     break;
                 case 'JLT':
                     if (variables[firstColor] < 0) {
-                        if (commandLine[commandIndex + 1]){
+                        if (commandLine[commandIndex + 1]) {
                             if (labels.hasOwnProperty(commandLine[commandIndex + 1].command)) {
                                 lineIndex = labels[commandLine[commandIndex + 1].command] - 1;
                             } else {
@@ -298,7 +304,7 @@ const run = async () => {
                     }
                     break;
                 case 'JMP':
-                    if (commandLine[commandIndex + 1]){
+                    if (commandLine[commandIndex + 1]) {
                         if (labels.hasOwnProperty(commandLine[commandIndex + 1].command)) {
                             lineIndex = labels[commandLine[commandIndex + 1].command] - 1;
                         } else {
@@ -306,12 +312,12 @@ const run = async () => {
                         }
                     }
                     break;
-                case 'SDO': 
+                case 'SDO':
                     const value = getVariableValue(firstColor);
                     consoleTextArea = document.getElementById('console-text-area');
-                    consoleTextArea.value += String.fromCharCode(parseInt(value,10));
+                    consoleTextArea.value += String.fromCharCode(parseInt(value, 10));
                     break;
-                case 'SDOI': 
+                case 'SDOI':
                     consoleTextArea = document.getElementById('console-text-area');
                     consoleTextArea.value += getVariableValue(firstColor);
                     break;
@@ -364,10 +370,10 @@ const bindEditorEvents = () => {
         if (event.inputType === 'deleteContentBackward') {
             codeStyle.splice(editor.selectionStart, prevCodes.length - editor.value.length);
         } else if (event.inputType === 'deleteContentForward') {
-            codeStyle.splice(editor.selectionStart , prevCodes.length - editor.value.length);
+            codeStyle.splice(editor.selectionStart, prevCodes.length - editor.value.length);
         } else if (event.inputType === 'insertText' || event.inputType === 'insertLineBreak') {
             if (prevCodes.length >= editor.value.length) {
-                codeStyle.splice(editor.selectionStart , prevCodes.length - editor.value.length + 1);
+                codeStyle.splice(editor.selectionStart, prevCodes.length - editor.value.length + 1);
             }
             codeStyle.splice(editor.selectionStart - 1, 0, null);
         } else {
