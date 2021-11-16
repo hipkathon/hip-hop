@@ -31,10 +31,19 @@
           <div id="display-text"></div>
         </div>
         <div class="d-flex mt-3">
-          <button class="w-100 big-button mx-3" onClick="interpreter.run()">
+          <button
+            id="run-button"
+            class="w-100 big-button mx-3"
+            onClick="interpreter.run()"
+          >
             Drop the beat
           </button>
-          <button class="w-100 big-button mx-3" onClick="interpreter.stop()">
+          <button
+            id="stop-button"
+            class="w-100 big-button mx-3"
+            onClick="interpreter.stop()"
+            disabled
+          >
             Mic drop
           </button>
         </div>

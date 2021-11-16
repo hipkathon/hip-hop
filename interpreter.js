@@ -70,6 +70,11 @@ class Interpreter {
     this.variables.clear();
     this.labels = {};
 
+    const runButton = document.getElementById("run-button");
+    const stopButton = document.getElementById("stop-button");
+    runButton.disabled = true;
+    stopButton.disabled = false;
+
     let consoleTextArea = document.getElementById("console-text-area");
     consoleTextArea.value = "";
 
@@ -239,5 +244,10 @@ class Interpreter {
 
   stop() {
     this.isRunning = false;
+
+    const runButton = document.getElementById("run-button");
+    const stopButton = document.getElementById("stop-button");
+    runButton.disabled = false;
+    stopButton.disabled = true;
   }
 }
