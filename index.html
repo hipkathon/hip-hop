@@ -14,6 +14,7 @@
     <script type="text/javascript" src="random.js"></script>
     <script type="text/javascript" src="playsound.js"></script>
     <script type="text/javascript" src="variables.js"></script>
+    <script type="text/javascript" src="interpreter.js"></script>
     <script type="text/javascript" src="main.js"></script>
   </head>
 
@@ -30,10 +31,10 @@
           <div id="display-text"></div>
         </div>
         <div class="d-flex mt-3">
-          <button class="w-100 big-button mx-3" onClick="run()">
+          <button class="w-100 big-button mx-3" onClick="interpreter.run()">
             Drop the beat
           </button>
-          <button class="w-100 big-button mx-3" onClick="cancel()">
+          <button class="w-100 big-button mx-3" onClick="interpreter.stop()">
             Mic drop
           </button>
         </div>
