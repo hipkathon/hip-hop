@@ -1,12 +1,12 @@
 const random = new Random();
 const play = new PlaySound();
+const variables = new Variables();
 
 let isRunning = false;
 const codeStyle = [];
 let prevCodes = "";
 
 const colors = ["red", "orange", "pink", "green", "blue", "purple", "black"];
-let variables = {};
 const labels = {};
 const keywordObject = {
   hip: "SDI",
@@ -32,57 +32,6 @@ const keywordObject = {
   hit: "JLT",
   disrespect: "JLT",
   call: "JMP",
-};
-
-const stack = [];
-
-const setVariableValue = (color, value) => {
-  if (!color) {
-    color = "black";
-  }
-  if (value === null || isNaN(value)) {
-    return;
-  }
-
-  if (color === "black") {
-    stack.push(value);
-    const blackWapper = document.getElementById("black-wrapper");
-
-    const span = document.createElement("span");
-    span.innerText = value;
-
-    blackWapper.append(span);
-  } else {
-    variables[color] = value;
-    const variableSpan = document.getElementById(`${color}-value`);
-    variableSpan.innerText = value;
-  }
-};
-
-const getVariableValue = (color) => {
-  if (!color) {
-    color = "black";
-  }
-
-  if (color === "black") {
-    const blackWapper = document.getElementById("black-wrapper");
-    if (blackWapper.childNodes.length === 1) {
-      return undefined;
-    }
-    const child = blackWapper.childNodes[blackWapper.childNodes.length - 1];
-    blackWapper.removeChild(child);
-
-    return stack.pop() || 0;
-  } else {
-    return variables[color] || 0;
-  }
-};
-
-const clearVariableValue = () => {
-  createColorButtons();
-
-  variables = {};
-  stack.length = 0;
 };
 
 const getCommandListPerLine = (codeContent) => {
@@ -121,7 +70,7 @@ let count = 8;
 const run = async () => {
   isRunning = true;
   count = 8;
-  clearVariableValue();
+  variables.clear();
 
   let consoleTextArea = document.getElementById("console-text-area");
   consoleTextArea.value = "";
@@ -169,45 +118,42 @@ const run = async () => {
 
       switch (keywordObject[commandObject.command]) {
         case "MOV":
-          setVariableValue(firstColor, getVariableValue(secondColor));
+          variables.set(firstColor, variables.get(secondColor));
           break;
         case "ADD":
-          setVariableValue(
+          variables.set(
             firstColor,
-            getVariableValue(firstColor) + getVariableValue(secondColor)
+            variables.get(firstColor) + variables.get(secondColor)
           );
           play.melody();
           break;
         case "SUB":
-          setVariableValue(
+          variables.set(
             firstColor,
-            getVariableValue(firstColor) - getVariableValue(secondColor)
+            variables.get(firstColor) - variables.get(secondColor)
           );
           play.melody();
           break;
         case "MUL":
-          setVariableValue(
+          variables.set(
             firstColor,
-            getVariableValue(firstColor) * getVariableValue(secondColor)
+            variables.get(firstColor) * variables.get(secondColor)
           );
           play.melody();
           break;
         case "DIV":
-          const secondValue = getVariableValue(secondColor);
+          const secondValue = variables.get(secondColor);
           if (secondValue === 0) {
-            setVariableValue(secondColor, secondValue);
+            variables.set(secondColor, secondValue);
           } else {
-            setVariableValue(
-              firstColor,
-              getVariableValue(firstColor) / secondValue
-            );
+            variables.set(firstColor, variables.get(firstColor) / secondValue);
             play.melody();
           }
           break;
         case "MOD":
-          setVariableValue(
+          variables.set(
             firstColor,
-            getVariableValue(firstColor) % getVariableValue(secondColor)
+            variables.get(firstColor) % variables.get(secondColor)
           );
           play.melody();
           break;
@@ -247,17 +193,17 @@ const run = async () => {
           }
           break;
         case "SDO":
-          const value = getVariableValue(firstColor);
+          const value = variables.get(firstColor);
           consoleTextArea = document.getElementById("console-text-area");
           consoleTextArea.value += String.fromCharCode(parseInt(value, 10));
           break;
         case "SDOI":
           consoleTextArea = document.getElementById("console-text-area");
-          consoleTextArea.value += getVariableValue(firstColor);
+          consoleTextArea.value += variables.get(firstColor);
           break;
         default:
           if (/^swa+g$/.test(commandObject.command)) {
-            setVariableValue(firstColor, commandObject.command.length - 3);
+            variables.set(firstColor, commandObject.command.length - 3);
           } else {
             labels[commandObject.command] = lineIndex;
           }
