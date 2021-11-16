@@ -31,4 +31,9 @@ class Random {
   rand() {
     return this.mulberry32();
   }
+
+  randRange(min, max) {
+    const range = max - min;
+    return min + Math.floor(this.mulberry32() * range);
+  }
 }

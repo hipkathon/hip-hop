@@ -1,32 +1,7 @@
 const random = new Random();
-let beats = [];
+const play = new PlaySound();
 
-const codes = [
-  ["C", "G", "Am", "F"],
-  ["F", "C", "Dm", "G"],
-];
-
-const hz = {
-  C: [130.813, 164.834, 195.998, 261.626, 329.628, 391.995, 523.251, 659.255],
-  Dm: [146.832, 184.997, 220.0, 293.665, 369.994, 440.0, 587.33, 739.989],
-  G: [146.832, 195.998, 246.942, 293.665, 391.995, 493.883, 587.33, 783.991],
-  Em: [155.564, 184.997, 195.998, 246.942, 311.127, 369.994, 391.995, 493.883],
-  Am: [130.813, 164.834, 220.0, 261.626, 329.628, 440.0, 523.251, 659.255],
-  F: [130.813, 174.614, 220.0, 261.626, 349.228, 440.0, 523.251, 698.457],
-};
-
-let codeType = 0;
-let codeIndex = -1;
 let isRunning = false;
-let audioContext = null;
-
-const getAudioContext = () => {
-  if (!audioContext) {
-    audioContext = new window.AudioContext() || new window.webkitAudioContext();
-  }
-  return audioContext;
-};
-
 const codeStyle = [];
 let prevCodes = "";
 
@@ -110,40 +85,6 @@ const clearVariableValue = () => {
   stack.length = 0;
 };
 
-const playBeat = () => {
-  getAudioContext();
-  const hz = 65.406;
-  //const beats = [0, 0.5, 1, 1.5];
-  //const beats = [0, 0.375, 0.5, 1, 1.5];
-
-  const oscillator = audioContext.createOscillator();
-  oscillator.connect(audioContext.destination);
-  oscillator.type = "sawtooth";
-  oscillator.frequency.value = 0;
-  oscillator.start(0);
-  const currentTime = audioContext.currentTime;
-  beats.forEach((beat) => {
-    oscillator.frequency.setTargetAtTime(hz, currentTime + beat + 0, 0.001);
-    oscillator.frequency.setTargetAtTime(0, currentTime + beat + 0.03, 0.001);
-  });
-  setTimeout(() => {
-    oscillator.stop(0);
-  }, 2000);
-};
-
-const playMelody = () => {
-  getAudioContext();
-  const oscillator = audioContext.createOscillator();
-  oscillator.connect(audioContext.destination);
-  oscillator.type = "sawtooth";
-  oscillator.frequency.value =
-    hz[codes[codeType][codeIndex]][Math.floor(random.rand() * 8)];
-  oscillator.start();
-  setTimeout(() => {
-    oscillator.stop(0);
-  }, 100);
-};
-
 const getCommandListPerLine = (codeContent) => {
   const commandListPerLine = [];
   let commandList = [];
@@ -179,7 +120,6 @@ let count = 8;
 
 const run = async () => {
   isRunning = true;
-  codeIndex = -1;
   count = 8;
   clearVariableValue();
 
@@ -190,7 +130,7 @@ const run = async () => {
   const codeContent = displayText.value;
 
   random.setSeed(codeContent.length.toString());
-  beats = [0.03, 0.53, 1.03, 1.53];
+  play.setCodeType();
 
   const commandListPerLine = getCommandListPerLine(codeContent);
 
@@ -205,8 +145,7 @@ const run = async () => {
     let commandLine = commandListPerLine[lineIndex];
 
     if (count == 8) {
-      playBeat();
-      codeIndex = (codeIndex + 1) % 4;
+      play.beat();
       count = 0;
     }
     count++;
@@ -237,21 +176,21 @@ const run = async () => {
             firstColor,
             getVariableValue(firstColor) + getVariableValue(secondColor)
           );
-          playMelody();
+          play.melody();
           break;
         case "SUB":
           setVariableValue(
             firstColor,
             getVariableValue(firstColor) - getVariableValue(secondColor)
           );
-          playMelody();
+          play.melody();
           break;
         case "MUL":
           setVariableValue(
             firstColor,
             getVariableValue(firstColor) * getVariableValue(secondColor)
           );
-          playMelody();
+          play.melody();
           break;
         case "DIV":
           const secondValue = getVariableValue(secondColor);
@@ -262,7 +201,7 @@ const run = async () => {
               firstColor,
               getVariableValue(firstColor) / secondValue
             );
-            playMelody();
+            play.melody();
           }
           break;
         case "MOD":
@@ -270,7 +209,7 @@ const run = async () => {
             firstColor,
             getVariableValue(firstColor) % getVariableValue(secondColor)
           );
-          playMelody();
+          play.melody();
           break;
         case "JEQ":
           if (variables[firstColor] === 0) {
