@@ -239,7 +239,9 @@ class Interpreter {
     }
 
     indicatorWrapper.removeChild(indicator);
-    isRunning = false;
+    this.isRunning = false;
+    runButton.disabled = false;
+    stopButton.disabled = true;
   }
 
   stop() {
