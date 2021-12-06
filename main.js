@@ -36,7 +36,8 @@ const bindEditorEvents = () => {
       );
     } else if (
       event.inputType === "insertText" ||
-      event.inputType === "insertLineBreak"
+      event.inputType === "insertLineBreak" ||
+      event.inputType === "insertCompositionText"
     ) {
       if (prevCodes.length >= editor.value.length) {
         codeStyle.splice(
