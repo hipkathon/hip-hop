@@ -93,7 +93,7 @@ const bindEditorEvents = () => {
     event.preventDefault();
   });
   editor.addEventListener("paste", (event) => {
-    const copiedData = event.clipboardData.getData("text/plain");
+    const copiedData = event.clipboardData.getData("text/plain").replaceAll('\r','');
     const editor = document.getElementById("editor");
     let cursorIndex = editor.selectionStart;
     for (let i = 0; i < copiedData.length; i++) {
