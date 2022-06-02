@@ -96,7 +96,15 @@ const bindEditorEvents = () => {
   editor.addEventListener("paste", (event) => {
     const copiedData = event.clipboardData.getData("text/plain").replaceAll('\r','');
     const editor = document.getElementById("editor");
+
     let cursorIndex = editor.selectionStart;
+    const originText = editor.value;
+    if (editor.selectionStart != editor.selectionEnd)
+    {
+      editor.value = originText.slice(0, editor.selectionStart) + originText.slice(editor.selectionEnd);
+      editor.selectionStart = cursorIndex;
+    }
+
     for (let i = 0; i < copiedData.length; i++) {
       if (copiedData[i] === "{") {
         const endBrace = copiedData.indexOf("}", i) + 1;
@@ -121,7 +129,8 @@ const bindEditorEvents = () => {
 
     renderDisplayText();
 
-    prevCodes = editor.value;
+    prevCodes = originText;
+    editor.selectionEnd = cursorIndex;
 
     event.preventDefault();
   });
